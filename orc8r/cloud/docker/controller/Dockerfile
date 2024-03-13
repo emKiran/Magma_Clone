@@ -102,7 +102,7 @@ RUN . /etc/profile.d/env.sh && make build
 FROM ubuntu:focal
 
 # Apt runtime deps
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get upgrade -y  && apt-get install -y \
   daemontools \
   netcat \
   openssl \

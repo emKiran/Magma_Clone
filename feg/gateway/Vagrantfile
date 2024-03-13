@@ -1,0 +1,24 @@
+VAGRANTFILE_API_VERSION = "2"
+Vagrant.require_version ">=1.9.1"
+ 
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.synced_folder "../..", "/home/vagrant/magma"
+  config.vm.define :feg, primary: true do |feg|
+	feg.vm.box = "generic/ubuntu1804"
+	feg.vm.box_version = "1.9.12"
+	feg.vbguest.auto_update = false
+	feg.vm.hostname = "magma-feg-dev"
+	feg.ssh.password = "vagrant"
+	feg.ssh.insert_key = true
+	feg.vm.network "private_network", ip: "192.168.50.3", virtualbox__intnet: "NatNetwork"
+	#bridged network for orc8r
+	feg.vm.network "public_network", bridge:"eno1"
+	feg.vm.provider "virtualbox" do |vb|
+  	vb.name = "feg-dev"
+  	vb.linked_clone = true
+  	vb.customize ["modifyvm", :id, "--memory", "1024"]
+  	vb.customize ["modifyvm", :id, "--cpus", "1"]
+  	vb.customize ["modifyvm", :id, "--nicpromisc2", "allow-all"]
+	end
+  end
+end
